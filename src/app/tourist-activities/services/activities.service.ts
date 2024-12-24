@@ -8,9 +8,10 @@ export class ActivitiesService {
   private baseUrl = 'http://127.0.0.1:8000'; // URL base de tu backend
 
   // Signals para almacenar el estado
-  actividades = signal<any[]>([]);
-  actividadDetalle = signal<any>(null);
-  actividadesConProveedores = signal<any[]>([]);
+  private actividades = signal<any[]>([]);
+  private actividadDetalle = signal<any>(null);
+  private actividadesConProveedores = signal<any[]>([]);
+  public isLoading: boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -37,18 +38,22 @@ export class ActivitiesService {
       });
   }
 
-  /**
-   * Busca actividades por coincidencia parcial en el nombre.
-   * @param nombre Nombre o parte del nombre de la actividad.
-   */
+  buscarActividades(query: string): void {
+    if (query.length === 0) {
+      this.actividades.set([]);
+      this.isLoading = false;
+      return;
+    }
 
-  // comparar con maps a ver que es mas reactivo
-  buscarActividades(nombre: string): void {
+    if (!this.actividades()) throw Error('No Hay actividades con ese nombre');
+
     this.http
-      .get<any[]>(`${this.baseUrl}/actividades/buscar/${nombre}`)
+      .get<any[]>(`${this.baseUrl}/actividades/buscar/${query}`)
       .subscribe((data) => {
         this.actividades.set(data);
       });
+
+    console.log(this.actividades());
   }
 
   /**
