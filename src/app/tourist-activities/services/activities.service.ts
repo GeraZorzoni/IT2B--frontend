@@ -1,23 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
+import { Actividad } from '../components/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActivitiesService {
-  private baseUrl = 'http://127.0.0.1:8000'; // URL base de tu backend
+  private baseUrl = 'http://127.0.0.1:8000';
 
   // Signals para almacenar el estado
-  private actividades = signal<any[]>([]);
-  private actividadDetalle = signal<any>(null);
-  private actividadesConProveedores = signal<any[]>([]);
-  public isLoading: boolean = false;
+  public actividades = signal<Actividad[]>([]);
+  public actividadDetalle = signal<Actividad | null>(null);
+  public actividadesConProveedores = signal<any[]>([]);
+  public isLoading = signal(false);
 
   constructor(private http: HttpClient) {}
-
-  /**
-   * Lista todas las actividades (sin descripción larga).
-   */
 
   listarActividades(): void {
     this.http.get<any[]>(`${this.baseUrl}/actividades`).subscribe((data) => {
@@ -25,45 +22,42 @@ export class ActivitiesService {
     });
   }
 
-  /**
-   * Obtiene el detalle completo de una actividad por ID.
-   * @param id El ID de la actividad.
-   */
+  buscarActividades(query: string): void {
+    if (query.length === 0) {
+      this.actividades.set([]);
+      this.isLoading.set(false);
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.http
+      .get<Actividad[]>(`${this.baseUrl}/actividades/buscar/${query}`)
+      .subscribe((data) => {
+        this.isLoading.set(false);
+        this.actividades.set(data);
+        console.log(this.actividades());
+      });
+  }
 
   obtenerDetalleActividad(id: number): void {
     this.http
       .get<any>(`${this.baseUrl}/actividades/${id}`)
       .subscribe((data) => {
         this.actividadDetalle.set(data);
+        console.log(this.actividadDetalle());
       });
   }
 
-  buscarActividades(query: string): void {
-    if (query.length === 0) {
-      this.actividades.set([]);
-      this.isLoading = false;
-      return;
-    }
-
-    if (!this.actividades()) throw Error('No Hay actividades con ese nombre');
-
-    this.http
-      .get<any[]>(`${this.baseUrl}/actividades/buscar/${query}`)
-      .subscribe((data) => {
-        this.actividades.set(data);
-      });
-
-    console.log(this.actividades());
-  }
-
-  /**
-   * Lista actividades junto con sus proveedores (o null si no tienen).
-   */
   listarActividadesConProveedores(): void {
     this.http
-      .get<any[]>(`${this.baseUrl}/actividades/detalle-proveedores`)
+      .get<Actividad[]>(`${this.baseUrl}/actividades/detalle-proveedores`)
       .subscribe((data) => {
         this.actividadesConProveedores.set(data);
       });
+  }
+
+  deleteActivities() {
+    this.actividades.set([]);
   }
 }

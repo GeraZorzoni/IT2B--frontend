@@ -1,25 +1,24 @@
-<!-- <div *ngIf="isLoadingPlaces" class="alert alert-primary mt-2 text-center">
-  <h6>Cargando</h6>
-  <span>Espere por favor...</span>
+<div *ngIf="isLoading" class="alert alert-primary mt-2 text-center">
+  <h6>Buscando</h6>
+  <span>Espere...</span>
 </div>
 
-<ul *ngIf="places.length > 0" class="list-group mt-2">
+<ul *ngIf="activities.length > 0" class="list-group mt-2">
   <li
-    *ngFor="let place of places"
+    *ngFor="let activity of activities"
     class="list-group-item list-group-item-action pointer"
-    [class.active]="place.id === selectedId"
-    (click)="flyTo(place)"
+    [class.active]="activity.id === selectedId"
   >
-    <h6>{{ place.text_es }}</h6>
-    <p>{{ place.place_name }}</p>
+    <h6>{{ activity.nombre }}</h6>
+    <p>{{ activity.descripcion_corta }}</p>
     <button
       class="btn btn-sm"
-      (click)="getDirections(place)"
+      (click)="goToActivityDetail(activity.id)"
       [ngClass]="
-        place.id === selectedId ? 'btn-outline-light' : 'btn-outline-primary'
+        activity.id === selectedId ? 'btn-outline-light' : 'btn-outline-primary'
       "
     >
-      Direcciones
+      Click para mas detalles
     </button>
   </li>
-</ul> -->
+</ul>

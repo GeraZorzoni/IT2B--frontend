@@ -1,2 +1,11 @@
-<div>results view</div>
-<div #mapDiv class="results-container"></div>
+<div class="results-container">
+  <div *ngIf="selectedActivity; else noSelection">
+    <h3>{{ selectedActivity.nombre }}</h3>
+    <p>Descripcion: {{ selectedActivity.descripcion_corta }}</p>
+    <p>Informacion: {{ selectedActivity.descripcion_larga }}</p>
+    <p>Precio:{{ selectedActivity.precio }}</p>
+  </div>
+  <ng-template #noSelection>
+    <p>No hay ninguna actividad seleccionada</p>
+  </ng-template>
+</div>
