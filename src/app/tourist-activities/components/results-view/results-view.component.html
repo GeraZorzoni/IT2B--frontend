@@ -1,5 +1,5 @@
 <div class="results-container">
-  <div *ngIf="selectedActivity; else noSelection">
+  <div *ngIf="selectedActivity; else noSelection" class="result-card">
     <h3>{{ selectedActivity.nombre }}</h3>
     <p>Descripcion: {{ selectedActivity.descripcion_corta }}</p>
     <p>Informacion: {{ selectedActivity.descripcion_larga }}</p>
