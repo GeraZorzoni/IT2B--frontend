@@ -20,6 +20,10 @@ export class SearchResultsComponent {
     return this.activitiesService.isLoading();
   }
 
+  get errorMessage() {
+    return this.activitiesService.error();
+  }
+
   get activities(): Actividad[] {
     return this.activitiesService.actividades();
   }

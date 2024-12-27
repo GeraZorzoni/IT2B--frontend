@@ -3,6 +3,11 @@
   <span>Espere...</span>
 </div>
 
+<div *ngIf="errorMessage" class="alert alert-danger mt-2 text-center">
+  <h6>Error</h6>
+  <span>{{ errorMessage }}</span>
+</div>
+
 <ul *ngIf="activities.length > 0" class="list-group mt-2">
   <li
     *ngFor="let activity of activities"

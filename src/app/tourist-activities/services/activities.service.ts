@@ -13,6 +13,7 @@ export class ActivitiesService {
   public actividadDetalle = signal<Actividad | null>(null);
   public actividadesConProveedores = signal<any[]>([]);
   public isLoading = signal(false);
+  public error = signal<string | null>(null);
 
   constructor(private http: HttpClient) {}
 
@@ -26,18 +27,36 @@ export class ActivitiesService {
     if (query.length === 0) {
       this.actividades.set([]);
       this.isLoading.set(false);
+      this.error.set(null);
       return;
     }
 
     this.isLoading.set(true);
+    this.error.set(null);
 
     this.http
       .get<Actividad[]>(`${this.baseUrl}/actividades/buscar/${query}`)
-      .subscribe((data) => {
-        this.isLoading.set(false);
-        this.actividades.set(data);
-        console.log(this.actividades());
-      });
+      .subscribe(
+        (data) => {
+          this.isLoading.set(false);
+
+          if (data.length === 0) {
+            this.error.set('No se encontraron actividades con ese nombre.');
+          } else {
+            this.error.set(null);
+          }
+
+          this.actividades.set(data);
+        },
+        (error) => {
+          this.isLoading.set(false);
+          if (error.status === 404) {
+            this.error.set('No se encontraron actividades con ese nombre.');
+          } else {
+            this.error.set('Ocurrió un error al buscar actividades.');
+          }
+        }
+      );
   }
 
   obtenerDetalleActividad(id: number): void {
@@ -45,7 +64,6 @@ export class ActivitiesService {
       .get<any>(`${this.baseUrl}/actividades/${id}`)
       .subscribe((data) => {
         this.actividadDetalle.set(data);
-        console.log(this.actividadDetalle());
       });
   }
 
